@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .login-form {
+  margin: 0 auto;
+  max-width: 55rem;
+  background-color: #fff;
+  padding: 5rem 7rem;
+  border-radius: 5px;
+  margin-bottom: 3.5rem;
+}
+.heading-secondary {
+  font-size: 2.25rem;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.1rem;
+  color: burlywood;
+  line-height: 1.3;
+  display: inline-block;
+}
+
+.form__input {
+  display: block;
+  font-family: inherit;
+  font-size: 1.5rem;
+  color: inherit;
+  padding: 1.25rem 1.75rem;
+  border: none;
+  width: 50%;
+  background-color: #f2f2f2;
+  border-top: 3px solid transparent;
+  border-bottom: 3px solid transparent;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.form__label {
+  display: block;
+  font-size: 1.6rem;
+  font-weight: 300;
+  color: burlywood;
+  margin-bottom: 0.75rem;
+}
+
+.form__group:not(:last-child) {
+    margin-bottom: 2.5rem;
+  }
+
+.btn {
+  font-size: 1.6rem;
+  padding: 1.2rem;
+  border-radius: 2rem;
+  text-transform: uppercase;
+  display: inline-block;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  background-color: burlywood;
+  color: #fff;
+}
+.btn:hover {
+  color: brown;
+}
+
+    </style>
+  </head>
+  <body>
+    <div class="login-form">
+      <h2 class="heading-secondary ma-bt-lg">login</h2>
+
+    <div class="todo">
+        <form class="form" method="post" action="http://localhost:4200/todos">
+            <div class="form__group">
+                <label class="form__label">title</label>
+                <input class="form__input" name="title" placeholder="title"></div>
+  
+                <div class="form__group ma-bt-md">
+                    <label class="form__label" for="description">description</label>
+                    <input class="form__input"  type="description" name="description" placeholder="description"></div>
+  
+                    <div class="form__group ma-bt-md">
+                      <label class="form__label" for="status">status</label>
+                      <input class="form__input"  type="status" name="status" placeholder="status"></div>
+    
+  
+            <div class="form__group">
+                <button class="btn btn--green">submit</button>
+        </form>
+    </div>
+  </div>
+  </body>
+  <script>
+      
+    const div = document.getElementById("todo");
+    const url = "http://localhost:4200/todos";
+    fetch(url)
+        .then((response) => {
+            return response.json();
+        })
+        .then((data) => {
+            data.forEach((todo) => {
+                const { title, description, status } = todo;
+
+                const h1 = document.createElement("h1");
+                const h2 = document.createElement("h2");
+                const p = document.createElement("p");
+                const btn = document.createElement("button")
+
+                h1.textContent = title;
+                h2.textContent = status;
+                p.textContent = description;
+
+                div.append(h1);
+                div.append(h2);
+                div.append(p);
+            });
+        });
+</script>
+
+</html>
