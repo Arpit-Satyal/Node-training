@@ -1,15 +1,23 @@
+/* external & internal packages */
+
 const fs = require("fs");
+const path = require("path");
 const express = require("express");
 const app = express();
 const router = new express.Router();
-const path = require("path");
-const map = require('./utils/map');
-const PORT = process.env.PORT || 4200;
+const mapContent = require('./utils/map');
 
+/* variables */
+
+const PORT = process.env.PORT || 4200;
 let data = JSON.parse(fs.readFileSync("data.json"));
+
+/* middlewares */
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+/* custom functions */ 
 
 function writeFile(data) {
   fs.writeFile("data.json", data, (err) => {
@@ -17,7 +25,7 @@ function writeFile(data) {
   });
 }
 
-/* CRUD */
+/* CRUD API endpoints */
 
 router.get("/todos", (req, res) => res.status(200).json(data));
 
@@ -33,7 +41,7 @@ router.put("/todos/:title", (req, res) => {
   const { title } = req.params;
   data.forEach((obj) => {
     if (obj.title === title) {
-     map(req.body, obj)
+     mapContent(req.body, obj)
     }
   });
 
@@ -50,7 +58,7 @@ router.delete("/todos/:title", (req, res) => {
   res.status(400).json(newData);
 });
 
-/* Login and register */
+/* Login and register endpoints */
 
 router.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "frontEnd", "/todo.html"));
