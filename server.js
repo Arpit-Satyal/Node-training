@@ -8,6 +8,7 @@ const router = new express.Router();
 const mapContent = require('./utils/map');
 const { validateBody } = require('./utils/validator');
 const { updateTodoSchema } = require('./utils/schema');
+
 /* variables */
 
 const PORT = process.env.PORT || 4200;
@@ -17,10 +18,14 @@ let data = JSON.parse(fs.readFileSync("data.json"));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use("/", router);
+
+/* error handling middleware */ 
+app.use((err, req, res, next) => res.status(400).json({ msg: err }))
 
 /* custom functions */ 
 
-function writeFile(data) {
+function writeToFile(data) {
   fs.writeFile("data.json", data, (err) => {
     if (err) throw err;
   });
@@ -34,7 +39,7 @@ router.post("/todos", validateBody(updateTodoSchema), (req, res) => {
   const { title, description, status } = req.body;
   data.push({ title, description, status });
   const newData = JSON.stringify(data);
-  writeFile(newData);
+  writeToFile(newData);
   res.status(200).json(data);
 });
 
@@ -47,7 +52,7 @@ router.put("/todos/:title", (req, res) => {
   });
 
   const updatedData = JSON.stringify(data);
-  writeFile(updatedData);
+  writeToFile(updatedData);
   res.status(200).json(data);
 });
 
@@ -55,7 +60,7 @@ router.delete("/todos/:title", (req, res) => {
   const { title } = req.params;
   const newData = data.filter((obj) => obj.title !== title);
   const remData = JSON.stringify(newData);
-  writeFile(remData);
+  writeToFile(remData);
   res.status(400).json(newData);
 });
 
@@ -80,12 +85,5 @@ router.get("/logout", (req, res) => {
   res.json({ msg: "bye!" });
 });
 
-app.use("/", router);
-
-/* error handling middleware */ 
-
-app.use((err, req, res, next) => {
-  res.status(400).json({ msg: err.details[0].message })
-})
 
 app.listen(PORT, () => console.log(`server listening at port ${PORT}`));
