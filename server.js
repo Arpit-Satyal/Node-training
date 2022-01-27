@@ -6,7 +6,8 @@ const express = require("express");
 const app = express();
 const router = new express.Router();
 const mapContent = require('./utils/map');
-
+const { validateBody } = require('./utils/validator');
+const { updateTodoSchema } = require('./utils/schema');
 /* variables */
 
 const PORT = process.env.PORT || 4200;
@@ -29,7 +30,7 @@ function writeFile(data) {
 
 router.get("/todos", (req, res) => res.status(200).json(data));
 
-router.post("/todos", (req, res) => {
+router.post("/todos", validateBody(updateTodoSchema), (req, res) => {
   const { title, description, status } = req.body;
   data.push({ title, description, status });
   const newData = JSON.stringify(data);
@@ -47,7 +48,7 @@ router.put("/todos/:title", (req, res) => {
 
   const updatedData = JSON.stringify(data);
   writeFile(updatedData);
-  res.status(400).json(data);
+  res.status(200).json(data);
 });
 
 router.delete("/todos/:title", (req, res) => {
@@ -80,5 +81,11 @@ router.get("/logout", (req, res) => {
 });
 
 app.use("/", router);
+
+/* error handling middleware */ 
+
+app.use((err, req, res, next) => {
+  res.status(400).json({ msg: err.details[0].message })
+})
 
 app.listen(PORT, () => console.log(`server listening at port ${PORT}`));
